@@ -1,6 +1,5 @@
-import { JsonController, Get, Param, Post, HttpCode, Put, Body, NotFoundError } from 'routing-controllers'
+import { JsonController, Get, Param, Post, HttpCode, Put, Body, NotFoundError, BadRequestError } from 'routing-controllers'
 import Game from './entity'
-
 
 const randomcolor=['red','blue','green','yellow','magenta']
 
@@ -13,13 +12,6 @@ const moves = (board1, board2) =>
 
 @JsonController()
 export default class GameController {
-
-    @Get('/games/:id')
-    getGame(
-    @Param('id') id: number
-    ) {
-    return Game.findOne(id)
-    }
 
     @Get('/games')
     async allGames() {
@@ -37,23 +29,24 @@ export default class GameController {
     return game.save()
     }
 
+    
     @Put('/games/:id')
     async updateGame(
     @Param('id') id: number,
     @Body() update: Partial<Game>
     ) {
+    
     const game = await Game.findOne(id)
     if (!game) throw new NotFoundError('Sorry, that game does not exist.')
+
+    //even if it works like this I need to look for a decorator to validate the colors, please see comments in the entity.ts
     const color = update.color
-    //need to look for a decorator to validate the colors
     if (color !== undefined && randomcolor.indexOf(color) < 0) 
-    throw new NotFoundError('The color you are trying to use is not correct.')
-    
+    throw new NotFoundError('That color is not allowed.')
 
-/*     //const board = update.board
-    const movesmade = moves(game.board, update.board)
-    if( movesmade !== 1) throw new BadRequestError('HTTP 400 Bad Request') */
-
+    if (update.board && moves(game.board, update.board) > 1) {
+        throw new BadRequestError(`Only one move per time is allowed.`)
+    }
  
     return Game.merge(game, update).save()
     }
