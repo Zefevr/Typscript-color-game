@@ -1,10 +1,14 @@
-import { JsonController, Get, Param, Post, HttpCode, BodyParam } from 'routing-controllers'
+import { JsonController, Get, Param, Post, HttpCode, Put, Body, NotFoundError } from 'routing-controllers'
 import Game from './entity'
-
-//type GameList = { pages: Game[] }
 
 
 const randomcolor=['red','blue','green','yellow','magenta']
+
+const moves = (board1, board2) => 
+  board1
+    .map((row, y) => row.filter((cell, x) => board2[y][x] !== cell))
+    .reduce((a, b) => a.concat(b))
+    .length
 
 
 @JsonController()
@@ -27,31 +31,30 @@ export default class GameController {
     @Post('/games')
     @HttpCode(201)
     createGame(
-    @BodyParam("name") name : string
-    ){
-    const game = new Game()
-    game.name = name
+        @Body() game: Game
+    ) {
     game.color = randomcolor[Math.floor(Math.random() * randomcolor.length)]
     return game.save()
     }
 
-}
-/* 
-    @Put('/pages/:id')
-    updatePage(
-        @Param('id') id: number,
-        @Body() body: Partial<Page>
-    ): Page {
-        console.log(`Incoming PUT body param:`, body)
-        return pagesById[id]
-    }
+    @Put('/games/:id')
+    async updateGame(
+    @Param('id') id: number,
+    @Body() update: Partial<Game>
+    ) {
+    const game = await Game.findOne(id)
+    if (!game) throw new NotFoundError('Sorry, that game does not exist.')
+    const color = update.color
+    //need to look for a decorator to validate the colors
+    if (color !== undefined && randomcolor.indexOf(color) < 0) 
+    throw new NotFoundError('The color you are trying to use is not correct.')
+    
 
-    @Post('/pages')
-    @HttpCode(201)
-    createPage(
-        @Body() body: Page
-    ): Page {
-        console.log(`Incoming POST body param:`, body)
-        return body
-    } */
+/*     //const board = update.board
+    const movesmade = moves(game.board, update.board)
+    if( movesmade !== 1) throw new BadRequestError('HTTP 400 Bad Request') */
+
+ 
+    return Game.merge(game, update).save()
+    }
 }

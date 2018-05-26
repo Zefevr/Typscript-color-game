@@ -2,27 +2,15 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 
 
-
-//export type Symbol = "o"
-export type Row = ["o", "o", "o"]
-export type Board = [ Row, Row, Row ]
-
-// type Status = 'pending' | 'started' | 'finished'
-
-const emptyRow: Row = ["o", "o", "o"]
-const defaultBoard: Board = [ emptyRow, emptyRow, emptyRow ] 
-
-/* const defaultBoard = [
+const defaultBoard = [
 	['o', 'o', 'o'],
 	['o', 'o', 'o'],
 	['o', 'o', 'o']
-] */
+]
 
 
 @Entity()
 export default class Games extends BaseEntity {
-
- // symbol: string;
 
   @PrimaryGeneratedColumn()
   id?: number
@@ -35,5 +23,5 @@ export default class Games extends BaseEntity {
   color: string
 
   @Column('json', {default: defaultBoard})
-  board: Board
+  board: JSON
 }
