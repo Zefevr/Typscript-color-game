@@ -3,11 +3,6 @@ import Game from './entity'
 
 //type GameList = { pages: Game[] }
 
-const defaultBoard = [
-	['o', 'o', 'o'],
-	['o', 'o', 'o'],
-	['o', 'o', 'o']
-]
 
 const randomcolor=['red','blue','green','yellow','magenta']
 
@@ -23,9 +18,9 @@ export default class GameController {
     }
 
     @Get('/games')
-    allGames() {
-    const games = Game.find()
-    return { games }
+    async allGames() {
+      const games = await Game.find()
+      return { games }
     }
     
 
@@ -37,7 +32,6 @@ export default class GameController {
     const game = new Game()
     game.name = name
     game.color = randomcolor[Math.floor(Math.random() * randomcolor.length)]
-    game.board = JSON.stringify(defaultBoard)
     return game.save()
     }
 
