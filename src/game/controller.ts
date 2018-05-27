@@ -35,6 +35,7 @@ export default class GameController {
     @Param('id') id: number,
     @Body() update: Partial<Game>
     ) {
+    if (update.id) throw new BadRequestError(`Sorry but you cannnot change the id`)
     
     const game = await Game.findOne(id)
     if (!game) throw new NotFoundError('Sorry, that game does not exist.')
