@@ -1,8 +1,10 @@
-# Typscript-color-game
-4th Assigment for codaisseur
+![typescript icon](https://github.com/Zefevr/Typscript-color-game/blob/master/dev-icons/ts.svg)
 
-#### Before testing this project please go to the db.ts file and check/change the name/password of:
-  'postgres://postgres:password@localhost:5432/postgres'
+
+## Typscript-color-game
+> Assigment for codaisseur
+
+
   
   
 
