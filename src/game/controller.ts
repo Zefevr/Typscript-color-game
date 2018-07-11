@@ -1,7 +1,7 @@
 import { JsonController, Get, Param, Post, HttpCode, Put, Body, NotFoundError, BadRequestError } from 'routing-controllers'
 import Game from './entity'
 
-const randomcolor=['red','blue','green','yellow','magenta']
+export const randomcolor=['red','blue','green','yellow','magenta']
 
 const moves = (board1, board2) => 
   board1
@@ -39,11 +39,6 @@ export default class GameController {
     
     const game = await Game.findOne(id)
     if (!game) throw new NotFoundError('Sorry, that game does not exist.')
-
-    //even if it works like this I need to look for a decorator to validate the colors, please see comments in the entity.ts
-    const color = update.color
-    if (color !== undefined && randomcolor.indexOf(color) < 0) 
-    throw new NotFoundError('That color is not allowed.')
 
     if (update.board && moves(game.board, update.board) > 1) {
         throw new BadRequestError(`Only one move per time is allowed.`)
